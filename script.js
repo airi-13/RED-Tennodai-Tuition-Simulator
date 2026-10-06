@@ -1,191 +1,464 @@
 const CONFIG = {
-  middle12: {
-    label: "中1・2",
-    lesson: 9900,
-    test: 4500,
-    pack1: {
-      name: "週4パック",
-      monthly: 29700,
-      maxLessons: 4
-    },
-    unlimited: 47520
-  },
-  middle3high1: {
-    label: "中3・高1",
-    lesson: 11800,
-    test: 5800,
-    pack1: {
-      name: "週6パック",
-      monthly: 39600,
-      maxLessons: 6
-    },
-    unlimited: 56640
-  }
+middle12: {
+label: "中1・2",
+
+```
+// 通常授業：1コマあたり月額
+lesson: 9900,
+
+// テスト対策：1教科・1回
+test: 4500,
+
+// 講習：1教科・1回
+course: 12200,
+
+// パック
+pack1: {
+  name: "週4パック",
+  monthly: 29700,
+  maxLessons: 4
+},
+
+// 無制限
+unlimited: 47520
+```
+
+},
+
+middle3high1: {
+label: "中3・高1",
+
+```
+// 通常授業：1コマあたり月額
+lesson: 11800,
+
+// テスト対策：1教科・1回
+test: 5800,
+
+// 講習：1教科・1回
+course: 14700,
+
+// パック
+pack1: {
+  name: "週6パック",
+  monthly: 39600,
+  maxLessons: 6
+},
+
+// 無制限
+unlimited: 56640
+```
+
+}
 };
 
+// 諸経費
+const ADMIN_FEE_MONTHLY = 2650;
+const ADMIN_FEE_ANNUAL = ADMIN_FEE_MONTHLY * 12;
+
+// 現在の選択
 let grade = "middle12";
 let subjects = 2;
 let lessons = 2;
 let testSubjects = 2;
 
-const yen = n => `${n.toLocaleString("ja-JP")}円`;
-
-function annualPack(monthly) {
-  return monthly * 12;
+// 金額表示
+function yen(value) {
+return value.toLocaleString("ja-JP") + "円";
 }
 
-function update() {
-  const c = CONFIG[grade];
+// 年間パック料金
+function annualPack(monthly) {
+return monthly * 12;
+}
 
-  // 絶対条件
+// 画面更新
+function update() {
+
+const config = CONFIG[grade];
+
+/*
+
+* 条件調整
+*
+* 通常授業教科数 ≦ 通常授業コマ数
+* 通常授業教科数 ≦ テスト対策教科数
+*
+* 教科数を増やした場合だけ、
+* 必要なコマ数・テスト対策教科数を自動的に引き上げる。
+  */
   lessons = Math.max(lessons, subjects);
   testSubjects = Math.max(testSubjects, subjects);
 
-  document.getElementById("subjectValue").textContent = subjects;
-  document.getElementById("lessonValue").textContent = lessons;
-  document.getElementById("testValue").textContent = testSubjects;
+// =========================
+// 通常料金
+// =========================
 
-  document.getElementById("lessonMinus").disabled = lessons <= subjects;
-  document.getElementById("testMinus").disabled = testSubjects <= subjects;
-  document.getElementById("subjectMinus").disabled = subjects <= 1;
+const regularLessonMonthly =
+config.lesson * lessons;
 
-  document.getElementById("lessonPlus").disabled = lessons >= 10;
-  document.getElementById("testPlus").disabled = testSubjects >= 10;
-  document.getElementById("subjectPlus").disabled = subjects >= 10;
+// 月額表示：
+// 通常授業料 ～ 通常授業料＋テスト対策料金
+const regularMonthlyMin =
+regularLessonMonthly;
 
-  const regularLessonMonthly = c.lesson * lessons;
-  const regularTestMonthly = c.test * testSubjects;
+const regularMonthlyMax =
+regularLessonMonthly +
+config.test * testSubjects;
 
-  // ユーザー指定：
-  // 月額は「通常授業のみ」～「通常授業＋テスト対策」
-  const regularMonthlyMin = regularLessonMonthly;
-  const regularMonthlyMax = regularLessonMonthly + regularTestMonthly;
+/*
 
-  // 年間は、テスト対策を年3回として計算
+* 年間費用
+*
+* 週1コマあたり料金 × 週コマ数 × 11
+* ＋ 通常受講教科数 × 講習料金 × 3
+* ＋ テスト対策料金 × 教科数 × 3
+* ＋ 諸経費
+  */
   const regularAnnual =
-    regularLessonMonthly * 12 +
-    regularTestMonthly * 3;
+  config.lesson * lessons * 11 +
+  subjects * config.course * 3 +
+  config.test * testSubjects * 3 +
+  ADMIN_FEE_ANNUAL;
 
-  const pack1Annual = annualPack(c.pack1.monthly);
-  const unlimitedAnnual = annualPack(c.unlimited);
+// =========================
+// パック
+// =========================
 
-  document.getElementById("summary").textContent =
-    `${c.label} ／ 通常${subjects}教科 ／ 週${lessons}コマ ／ テスト対策${testSubjects}教科`;
+const pack1Monthly =
+config.pack1.monthly;
 
-  document.getElementById("regularMonthly").textContent =
-    `${yen(regularMonthlyMin)}～${yen(regularMonthlyMax)}`;
+const pack1Annual =
+annualPack(pack1Monthly) +
+ADMIN_FEE_ANNUAL;
 
-  document.getElementById("regularAnnual").textContent =
-    yen(regularAnnual);
+// =========================
+// 無制限
+// =========================
 
-  document.getElementById("pack1Name").textContent = c.pack1.name;
-  document.getElementById("pack1Note").textContent =
-    `週${c.pack1.maxLessons}コマまで`;
+const unlimitedMonthly =
+config.unlimited;
 
-  document.getElementById("pack1Monthly").textContent =
-    yen(c.pack1.monthly);
-  document.getElementById("pack1Annual").textContent =
-    yen(pack1Annual);
+const unlimitedAnnual =
+annualPack(unlimitedMonthly) +
+ADMIN_FEE_ANNUAL;
 
-  document.getElementById("unlimitedMonthly").textContent =
-    yen(c.unlimited);
-  document.getElementById("unlimitedAnnual").textContent =
-    yen(unlimitedAnnual);
+// =========================
+// 料金表示
+// =========================
 
-  const status = document.getElementById("pack1Status");
-  if (lessons <= c.pack1.maxLessons) {
-    const diff = regularAnnual - pack1Annual;
-    status.className = "status ok";
-    status.textContent =
-      `${c.pack1.name}は現在の週${lessons}コマに対応しています。` +
-      (diff > 0
-        ? ` 通常料金より年間${yen(diff)}お得です。`
-        : diff === 0
-          ? " 通常料金と年間料金が同額です。"
-          : ` 通常料金より年間${yen(Math.abs(diff))}高くなります。`);
-  } else {
-    status.className = "status";
-    status.textContent =
-      `現在の週${lessons}コマでは${c.pack1.name}の上限（週${c.pack1.maxLessons}コマ）を超えるため利用できません。`;
-  }
+document.getElementById("regularMonthly").textContent =
+yen(regularMonthlyMin) + "～" + yen(regularMonthlyMax);
 
-  const recommendation = document.getElementById("recommendation");
+document.getElementById("regularAnnual").textContent =
+yen(regularAnnual);
 
-  const candidates = [
-    { name: "通常料金", annual: regularAnnual, available: true },
-    {
-      name: c.pack1.name,
-      annual: pack1Annual,
-      available: lessons <= c.pack1.maxLessons
-    },
-    { name: "無制限", annual: unlimitedAnnual, available: true }
-  ].filter(x => x.available);
+document.getElementById("packMonthly").textContent =
+yen(pack1Monthly);
 
-  const cheapest = candidates.reduce((a, b) =>
-    a.annual <= b.annual ? a : b
-  );
+document.getElementById("packAnnual").textContent =
+yen(pack1Annual);
 
-  if (cheapest.name === "通常料金") {
-    recommendation.textContent =
-      "この条件では、年間料金だけを見ると通常料金が最も低くなります。";
-  } else {
-    const diff = regularAnnual - cheapest.annual;
-    recommendation.textContent =
-      `${cheapest.name}がおすすめです。通常料金と比べて年間${yen(Math.abs(diff))}` +
-      `${diff >= 0 ? "お得です。" : "高くなります。"}`
-  }
+document.getElementById("unlimitedMonthly").textContent =
+yen(unlimitedMonthly);
+
+document.getElementById("unlimitedAnnual").textContent =
+yen(unlimitedAnnual);
+
+// =========================
+// 詳細表示
+// =========================
+
+document.getElementById("regularMonthlyRange").textContent =
+yen(regularMonthlyMin) +
+"～" +
+yen(regularMonthlyMax) +
+"/月";
+
+document.getElementById("packDetailTitle").textContent =
+config.pack1.name;
+
+document.getElementById("packDetailValue").textContent =
+yen(pack1Monthly) + "/月";
+
+document.getElementById("unlimitedDetailValue").textContent =
+yen(unlimitedMonthly) + "/月";
+
+// =========================
+// 学年によるパック名変更
+// =========================
+
+document.getElementById("packColumnName").textContent =
+config.pack1.name;
+
+document.getElementById("rulesPackName").textContent =
+config.pack1.name;
+
+// =========================
+// 比較表
+// =========================
+
+document.getElementById("regularLessonRule").textContent =
+"週" + lessons + "コマ";
+
+document.getElementById("packLessonRule").textContent =
+"週" + config.pack1.maxLessons + "コマまで";
+
+document.getElementById("regularSubjectRule").textContent =
+subjects + "教科";
+
+// =========================
+// パック利用可否
+// =========================
+
+const packStatus =
+document.getElementById("packStatus");
+
+if (lessons <= config.pack1.maxLessons) {
+
+```
+packStatus.textContent =
+  config.pack1.name +
+  "は、現在選択している週" +
+  lessons +
+  "コマの受講に対応しています。";
+```
+
+} else {
+
+```
+packStatus.textContent =
+  "現在の週" +
+  lessons +
+  "コマでは" +
+  config.pack1.name +
+  "の上限を超えるため、通常料金または無制限をご利用ください。";
+```
+
 }
 
-document.querySelectorAll(".grade-choices .choice").forEach(btn => {
-  btn.addEventListener("click", () => {
-    grade = btn.dataset.grade;
-    document.querySelectorAll(".grade-choices .choice")
-      .forEach(x => x.classList.remove("active"));
-    btn.classList.add("active");
-    update();
-  });
+// =========================
+// おすすめプラン
+// =========================
+
+const availablePlans = [
+{
+name: "通常料金",
+annual: regularAnnual
+}
+];
+
+if (lessons <= config.pack1.maxLessons) {
+
+```
+availablePlans.push({
+  name: config.pack1.name,
+  annual: pack1Annual
+});
+```
+
+}
+
+availablePlans.push({
+name: "無制限",
+annual: unlimitedAnnual
 });
 
-document.getElementById("subjectMinus").addEventListener("click", () => {
-  if (subjects > 1) {
-    subjects--;
-    update();
-  }
+availablePlans.sort((a, b) =>
+a.annual - b.annual
+);
+
+const cheapest =
+availablePlans[0];
+
+document.getElementById("recommendTitle").textContent =
+cheapest.name;
+
+document.getElementById("recommendText").textContent =
+"年間費用のシミュレーションでは、" +
+cheapest.name +
+"が最も低い料金です。";
+
+// =========================
+// カウンター表示
+// =========================
+
+document.getElementById("subjectCount").textContent =
+subjects;
+
+document.getElementById("lessonCount").textContent =
+lessons;
+
+document.getElementById("testSubjectCount").textContent =
+testSubjects;
+
+// =========================
+// −ボタンの無効化
+// =========================
+
+document.getElementById("subjectMinus").disabled =
+subjects <= 1;
+
+document.getElementById("lessonMinus").disabled =
+lessons <= subjects;
+
+document.getElementById("testSubjectMinus").disabled =
+testSubjects <= subjects;
+
+// =========================
+// ＋ボタンの無効化
+// 最大5教科
+// =========================
+
+document.getElementById("subjectPlus").disabled =
+subjects >= 5;
+
+document.getElementById("testSubjectPlus").disabled =
+testSubjects >= 5;
+
+// 週コマ数は最大10コマ
+document.getElementById("lessonPlus").disabled =
+lessons >= 10;
+
+// =========================
+// 学年ボタン
+// =========================
+
+document.querySelectorAll(".grade-btn").forEach(button => {
+
+```
+button.classList.toggle(
+  "active",
+  button.dataset.grade === grade
+);
+```
+
 });
 
-document.getElementById("subjectPlus").addEventListener("click", () => {
-  if (subjects < 10) {
-    subjects++;
-    update();
-  }
+}
+
+// =========================
+// 学年ボタン
+// =========================
+
+document.querySelectorAll(".grade-btn").forEach(button => {
+
+button.addEventListener("click", () => {
+
+```
+grade = button.dataset.grade;
+
+update();
+```
+
 });
 
-document.getElementById("lessonMinus").addEventListener("click", () => {
-  if (lessons > subjects) {
-    lessons--;
-    update();
-  }
 });
 
-document.getElementById("lessonPlus").addEventListener("click", () => {
-  if (lessons < 10) {
-    lessons++;
-    update();
-  }
+// =========================
+// 通常授業教科数
+// =========================
+
+document.getElementById("subjectMinus")
+.addEventListener("click", () => {
+
+```
+if (subjects > 1) {
+
+  subjects--;
+
+  update();
+
+}
+```
+
 });
 
-document.getElementById("testMinus").addEventListener("click", () => {
-  if (testSubjects > subjects) {
-    testSubjects--;
-    update();
-  }
+document.getElementById("subjectPlus")
+.addEventListener("click", () => {
+
+```
+if (subjects < 5) {
+
+  subjects++;
+
+  update();
+
+}
+```
+
 });
 
-document.getElementById("testPlus").addEventListener("click", () => {
-  if (testSubjects < 10) {
-    testSubjects++;
-    update();
-  }
+// =========================
+// 通常授業週コマ数
+// =========================
+
+document.getElementById("lessonMinus")
+.addEventListener("click", () => {
+
+```
+if (lessons > subjects) {
+
+  lessons--;
+
+  update();
+
+}
+```
+
 });
+
+document.getElementById("lessonPlus")
+.addEventListener("click", () => {
+
+```
+if (lessons < 10) {
+
+  lessons++;
+
+  update();
+
+}
+```
+
+});
+
+// =========================
+// テスト対策教科数
+// =========================
+
+document.getElementById("testSubjectMinus")
+.addEventListener("click", () => {
+
+```
+if (testSubjects > subjects) {
+
+  testSubjects--;
+
+  update();
+
+}
+```
+
+});
+
+document.getElementById("testSubjectPlus")
+.addEventListener("click", () => {
+
+```
+if (testSubjects < 5) {
+
+  testSubjects++;
+
+  update();
+
+}
+```
+
+});
+
+// =========================
+// 初期表示
+// =========================
 
 update();
