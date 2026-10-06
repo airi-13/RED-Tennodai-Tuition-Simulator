@@ -1,619 +1,297 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1e73be">
-  <title>RED 料金シミュレーター</title>
+  <title>自立学習RED 料金シミュレーター</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+  <header class="header">
+    <div class="header-inner">
+      <div class="brand-small">自立学習RED</div>
+      <h1>料金シミュレーター</h1>
+      <p>ご希望の受講内容から料金を比較できます</p>
+    </div>
+  </header>
+
   <main class="container">
 
-    <!-- ヘッダー -->
-    <header class="hero">
-      <div class="brand">自立学習RED</div>
-      <h1>料金シミュレーター</h1>
-      <p>
-        受講内容を選択すると、料金と各プランの違いを比較できます。
-      </p>
-    </header>
+```
+<!-- 学年 -->
+<section class="card">
+  <h2>① 学年</h2>
+
+  <div class="grade-buttons">
+    <button class="grade-btn active" data-grade="middle12">
+      中1・2
+    </button>
+
+    <button class="grade-btn" data-grade="middle3high1">
+      中3・高1
+    </button>
+  </div>
+</section>
 
 
-    <!-- ① 学年 -->
-    <section class="card">
+<!-- 通常授業の教科数 -->
+<section class="card">
+  <h2>② 通常授業の教科数</h2>
 
-      <div class="step">
-        <span class="step-number">1</span>
+  <div class="counter-area">
+    <button class="counter-btn minus" id="subjectMinus">−</button>
 
-        <div>
-          <h2>学年を選択</h2>
-          <p class="hint">
-            学年によって料金・パック内容が変わります。
-          </p>
-        </div>
+    <div class="counter-value">
+      <span id="subjectCount">2</span>
+      <span class="unit">教科</span>
+    </div>
+
+    <button class="counter-btn plus" id="subjectPlus">＋</button>
+  </div>
+
+  <p class="hint">
+    通常授業で受講する教科数を選択してください。
+  </p>
+</section>
+
+
+<!-- 通常授業の週コマ数 -->
+<section class="card">
+  <h2>③ 通常授業の週コマ数</h2>
+
+  <div class="counter-area">
+    <button class="counter-btn minus" id="lessonMinus">−</button>
+
+    <div class="counter-value">
+      <span id="lessonCount">2</span>
+      <span class="unit">コマ</span>
+    </div>
+
+    <button class="counter-btn plus" id="lessonPlus">＋</button>
+  </div>
+
+  <p class="hint">
+    週1コマから選択できます。通常授業の教科数以上のコマ数が必要です。
+  </p>
+</section>
+
+
+<!-- テスト対策 -->
+<section class="card">
+  <h2>④ テスト対策の教科数</h2>
+
+  <div class="counter-area">
+    <button class="counter-btn minus" id="testSubjectMinus">−</button>
+
+    <div class="counter-value">
+      <span id="testSubjectCount">2</span>
+      <span class="unit">教科</span>
+    </div>
+
+    <button class="counter-btn plus" id="testSubjectPlus">＋</button>
+  </div>
+
+  <p class="hint">
+    テスト対策を受講する教科数を選択してください。
+  </p>
+</section>
+
+
+<!-- 料金比較 -->
+<section class="card price-card">
+
+  <h2>料金比較</h2>
+
+  <div class="price-table-wrap">
+    <table class="price-table">
+
+      <thead>
+        <tr>
+          <th>料金</th>
+          <th>通常料金</th>
+          <th id="packColumnName">週4パック</th>
+          <th>無制限</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <th>月額</th>
+          <td id="regularMonthly">19,800円</td>
+          <td id="packMonthly">29,700円</td>
+          <td id="unlimitedMonthly">47,520円</td>
+        </tr>
+
+        <tr class="annual-row">
+          <th>年間費用</th>
+          <td id="regularAnnual">—</td>
+          <td id="packAnnual">—</td>
+          <td id="unlimitedAnnual">—</td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+
+  <div class="simulation-note">
+    <strong>通常料金の年間費用は、授業料・テスト対策料金・講習料金・諸経費を含めたシミュレーションです。</strong>
+  </div>
+
+  <div class="price-detail">
+
+    <div class="detail-box">
+      <div class="detail-title">通常料金</div>
+      <div class="detail-value" id="regularMonthlyRange">
+        19,800～28,800円/月
       </div>
-
-
-      <div class="choices grade-choices">
-
-        <button
-          class="choice active"
-          data-grade="middle12"
-          type="button"
-        >
-          <strong>中1・2</strong>
-          <span>通常 1コマ 9,900円／月</span>
-        </button>
-
-
-        <button
-          class="choice"
-          data-grade="middle3high1"
-          type="button"
-        >
-          <strong>中3・高1</strong>
-          <span>通常 1コマ 11,800円／月</span>
-        </button>
-
+      <div class="detail-text">
+        通常授業＋テスト対策
       </div>
+    </div>
 
-    </section>
-
-
-
-    <!-- ② 通常授業の教科数 -->
-    <section class="card">
-
-      <div class="step">
-
-        <span class="step-number">2</span>
-
-        <div>
-          <h2>通常授業の教科数</h2>
-
-          <p class="hint">
-            通常授業で受講する教科数を選択してください。
-          </p>
-        </div>
-
+    <div class="detail-box">
+      <div class="detail-title" id="packDetailTitle">
+        週4パック
       </div>
-
-
-      <div class="counter">
-
-        <button
-          class="counter-btn"
-          id="subjectMinus"
-          type="button"
-          aria-label="教科数を減らす"
-        >
-          −
-        </button>
-
-
-        <div class="counter-value">
-
-          <span id="subjectValue">2</span>
-
-          <small>教科</small>
-
-        </div>
-
-
-        <button
-          class="counter-btn"
-          id="subjectPlus"
-          type="button"
-          aria-label="教科数を増やす"
-        >
-          ＋
-        </button>
-
+      <div class="detail-value" id="packDetailValue">
+        29,700円/月
       </div>
-
-    </section>
-
-
-
-    <!-- ③ 通常授業の週コマ数 -->
-    <section class="card">
-
-      <div class="step">
-
-        <span class="step-number">3</span>
-
-        <div>
-
-          <h2>通常授業の週コマ数</h2>
-
-          <p class="hint">
-            通常授業の教科数以上のコマ数が必要です。
-          </p>
-
-        </div>
-
+      <div class="detail-text">
+        テスト対策追加料金なし
       </div>
+    </div>
 
-
-      <div class="counter">
-
-        <button
-          class="counter-btn"
-          id="lessonMinus"
-          type="button"
-          aria-label="週コマ数を減らす"
-        >
-          −
-        </button>
-
-
-        <div class="counter-value">
-
-          <span id="lessonValue">2</span>
-
-          <small>コマ／週</small>
-
-        </div>
-
-
-        <button
-          class="counter-btn"
-          id="lessonPlus"
-          type="button"
-          aria-label="週コマ数を増やす"
-        >
-          ＋
-        </button>
-
+    <div class="detail-box">
+      <div class="detail-title">無制限</div>
+      <div class="detail-value" id="unlimitedDetailValue">
+        47,520円/月
       </div>
-
-    </section>
-
-
-
-    <!-- ④ テスト対策の教科数 -->
-    <section class="card">
-
-      <div class="step">
-
-        <span class="step-number">4</span>
-
-        <div>
-
-          <h2>テスト対策の教科数</h2>
-
-          <p class="hint">
-            通常授業の教科数以上の教科数が必要です。
-          </p>
-
-        </div>
-
+      <div class="detail-text">
+        テスト対策追加料金なし
       </div>
+    </div>
 
+  </div>
 
-      <div class="counter">
+</section>
 
-        <button
-          class="counter-btn"
-          id="testMinus"
-          type="button"
-          aria-label="テスト対策教科数を減らす"
-        >
-          −
-        </button>
 
+<!-- おすすめ -->
+<section class="recommend-card">
 
-        <div class="counter-value">
+  <div class="recommend-label">
+    おすすめ
+  </div>
 
-          <span id="testValue">2</span>
+  <h2 id="recommendTitle">
+    —
+  </h2>
 
-          <small>教科</small>
+  <p id="recommendText">
+    —
+  </p>
 
-        </div>
+</section>
 
 
-        <button
-          class="counter-btn"
-          id="testPlus"
-          type="button"
-          aria-label="テスト対策教科数を増やす"
-        >
-          ＋
-        </button>
+<!-- パック利用可否 -->
+<section class="status-card" id="packStatus">
+  —
+</section>
 
-      </div>
 
-    </section>
+<!-- プラン比較 -->
+<section class="card">
 
+  <h2>プラン比較</h2>
 
+  <div class="rules-table-wrap">
 
-    <!-- 料金比較 -->
-    <section class="card result-card">
+    <table class="rules-table">
 
-      <div class="result-heading">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th>通常料金</th>
+          <th id="rulesPackName">週4パック</th>
+          <th>無制限</th>
+        </tr>
+      </thead>
 
-        <span class="result-icon">✓</span>
+      <tbody>
 
-        <div>
+        <tr>
+          <th>通常授業コマ数</th>
+          <td id="regularLessonRule">週2コマ</td>
+          <td id="packLessonRule">週4コマまで</td>
+          <td>制限なし</td>
+        </tr>
 
-          <h2>料金比較</h2>
+        <tr>
+          <th>通常授業教科数</th>
+          <td id="regularSubjectRule">2教科</td>
+          <td>最大5教科</td>
+          <td>最大5教科</td>
+        </tr>
 
-          <p id="summary">
-            中1・2 ／ 通常2教科 ／ 週2コマ ／ テスト対策2教科
-          </p>
+        <tr>
+          <th>振替</th>
+          <td>4週間以内なら可</td>
+          <td>不可</td>
+          <td>不可</td>
+        </tr>
 
-        </div>
+        <tr>
+          <th>テスト対策</th>
+          <td>1教科ごとに料金</td>
+          <td>追加料金なし</td>
+          <td>追加料金なし</td>
+        </tr>
 
-      </div>
+        <tr>
+          <th>テキスト</th>
+          <td>別途</td>
+          <td>別途</td>
+          <td>別途</td>
+        </tr>
 
+      </tbody>
 
+    </table>
 
-      <div class="comparison-table">
+  </div>
 
-        <div class="table-row table-head">
+</section>
 
-          <div>プラン</div>
 
-          <div>月額</div>
+<!-- 注意事項 -->
+<section class="notes">
 
-          <div>年間</div>
+  <h2>ご注意</h2>
 
-        </div>
-
-
-
-        <!-- 通常料金 -->
-
-        <div class="table-row regular-row">
-
-          <div>
-
-            <strong>通常料金</strong>
-
-            <small>
-              テスト対策月は追加料金あり
-            </small>
-
-          </div>
-
-          <div id="regularMonthly">
-            19,800円～28,800円
-          </div>
-
-          <div id="regularAnnual">
-            248,400円
-          </div>
-
-        </div>
-
-
-
-        <!-- パック -->
-
-        <div class="table-row pack-row">
-
-          <div>
-
-            <strong id="pack1Name">
-              週4パック
-            </strong>
-
-            <small id="pack1Note">
-              週4コマまで
-            </small>
-
-          </div>
-
-          <div id="pack1Monthly">
-            29,700円
-          </div>
-
-          <div id="pack1Annual">
-            356,400円
-          </div>
-
-        </div>
-
-
-
-        <!-- 無制限 -->
-
-        <div class="table-row pack-row">
-
-          <div>
-
-            <strong>
-              無制限
-            </strong>
-
-            <small>
-              コマ数の上限なし
-            </small>
-
-          </div>
-
-          <div id="unlimitedMonthly">
-            47,520円
-          </div>
-
-          <div id="unlimitedAnnual">
-            570,240円
-          </div>
-
-        </div>
-
-      </div>
-
-
-
-      <div
-        id="pack1Status"
-        class="status"
-      ></div>
-
-
-      <div
-        id="recommendation"
-        class="recommendation"
-      ></div>
-
-
-
-      <div class="notes">
-
-        <p>
-          ※通常料金の年間料金は、
-          「通常1コマあたり料金 × 週コマ数 × 12 ＋
-          テスト対策料金 × テスト対策教科数 × 年3回」
-          で計算しています。
-        </p>
-
-        <p>
-          ※通常料金の月額は、
-          通常授業のみの場合の金額～
-          テスト対策を実施する月の金額を表示しています。
-        </p>
-
-        <p>
-          ※パック料金は、テスト期間にテキストを持っている教科であれば、
-          何教科受講しても追加料金はかかりません。
-        </p>
-
-        <p>
-          ※パック料金では振替はできません。
-        </p>
-
-        <p>
-          ※テキスト代・諸経費は、
-          通常料金・パック料金のどちらにも共通して別途かかります。
-        </p>
-
-      </div>
-
-    </section>
-
-
-
-    <!-- プラン比較 -->
-    <section class="card plan-comparison-card">
-
-      <div class="result-heading">
-
-        <span class="result-icon">✓</span>
-
-        <div>
-
-          <h2>プラン比較</h2>
-
-          <p class="plan-comparison-subtitle">
-            選択した内容に応じて表示が変わります。
-          </p>
-
-        </div>
-
-      </div>
-
-
-
-      <div class="comparison-table rules-table">
-
-        <!-- 見出し -->
-
-        <div class="table-row table-head">
-
-          <div>比較項目</div>
-
-          <div>
-            通常料金
-          </div>
-
-          <div id="packColumnName">
-            週4パック
-          </div>
-
-          <div>
-            無制限
-          </div>
-
-        </div>
-
-
-
-        <!-- 通常授業コマ数 -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              通常授業コマ数
-            </strong>
-          </div>
-
-          <div id="regularLessonRule">
-            週2コマ
-          </div>
-
-          <div id="packLessonRule">
-            週4コマまで
-          </div>
-
-          <div>
-            制限なし
-          </div>
-
-        </div>
-
-
-
-        <!-- 通常授業教科数 -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              通常授業教科数
-            </strong>
-          </div>
-
-          <div id="regularSubjectRule">
-            2教科
-          </div>
-
-          <div>
-            最大5教科
-          </div>
-
-          <div>
-            最大5教科
-          </div>
-
-        </div>
-
-
-
-        <!-- 振替 -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              振替
-            </strong>
-          </div>
-
-          <div>
-            4週間以内なら可
-          </div>
-
-          <div>
-            不可
-          </div>
-
-          <div>
-            不可
-          </div>
-
-        </div>
-
-
-
-        <!-- テスト対策 -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              テスト対策
-            </strong>
-          </div>
-
-          <div>
-            1教科ごとに料金
-          </div>
-
-          <div>
-            追加料金なし
-          </div>
-
-          <div>
-            追加料金なし
-          </div>
-
-        </div>
-
-
-
-        <!-- テキスト -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              テキスト
-            </strong>
-          </div>
-
-          <div>
-            別途
-          </div>
-
-          <div>
-            別途
-          </div>
-
-          <div>
-            別途
-          </div>
-
-        </div>
-
-
-
-        <!-- 諸経費 -->
-
-        <div class="table-row">
-
-          <div>
-            <strong>
-              諸経費
-            </strong>
-          </div>
-
-          <div>
-            別途
-          </div>
-
-          <div>
-            別途
-          </div>
-
-          <div>
-            別途
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-
-    <!-- フッター -->
-
-    <footer>
-
-      <p>
-        自立学習RED 天王台教室
-      </p>
-
-    </footer>
+  <ul>
+    <li>通常授業の教科数は最大5教科です。</li>
+    <li>通常授業は、受講教科数以上の週コマ数が必要です。</li>
+    <li>テスト対策は、通常授業の受講教科数以上の教科数から選択できます。</li>
+    <li>パック料金は振替不可です。</li>
+    <li>パック料金のテスト対策は、テキストをお持ちであれば何教科でも追加料金なしで受講できます。</li>
+    <li>通常料金の年間費用には諸経費（月額2,650円×12か月）を含んでいます。</li>
+    <li>テキスト代は別途実費となります。</li>
+  </ul>
+
+</section>
+```
 
   </main>
 
+  <footer class="footer">
+    <p>自立学習RED 天王台教室</p>
+  </footer>
 
   <script src="script.js"></script>
 
